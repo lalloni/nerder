@@ -36,4 +36,4 @@ shell: _cache
 
 # Live-reloading UI served to a host browser at http://localhost:34115
 dev: _cache
-    {{ctr}} --network host {{image}} xvfb-run -a dbus-run-session -- wails dev -browser -tags {{tags}}
+    {{ctr}} --init --name nerder-dev --network host {{image}} xvfb-run -a wails dev -tags {{tags}}

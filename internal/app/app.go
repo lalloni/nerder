@@ -135,9 +135,9 @@ func (a *App) view(folder string) (FamilyView, error) {
 	return FamilyView{Family: fam, Status: string(s)}, err
 }
 
-// FontHandler serves GET /fonts/<folder>/<file> from the download cache. Only
+// NewFontHandler serves GET /fonts/<folder>/<file> from the download cache. Only
 // files that actually sit in a family's cache directory are served.
-func (a *App) FontHandler() http.Handler {
+func NewFontHandler(a *App) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		parts := strings.Split(strings.TrimPrefix(r.URL.Path, "/fonts/"), "/")
 		if !strings.HasPrefix(r.URL.Path, "/fonts/") || len(parts) != 2 {

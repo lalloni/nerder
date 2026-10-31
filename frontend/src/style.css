@@ -1,26 +1,190 @@
-html {
-    background-color: rgba(27, 38, 54, 1);
-    text-align: center;
-    color: white;
+:root {
+    --bg: #fafaf9;
+    --card: #ffffff;
+    --ink: #1c1917;
+    --muted: #78716c;
+    --line: #e7e5e4;
+    --accent: #0f766e;
+    --accent-ink: #ffffff;
+    --danger: #b42318;
+    --code-bg: #f6f5f4;
+
+    --tok-keyword: #8250df;
+    --tok-string: #0a7a45;
+    --tok-number: #b45309;
+    --tok-comment: #8b8680;
+    --tok-operator: #c2410c;
+    --tok-punct: #6b6560;
+    --tok-builtin: #0b6fa4;
+    --tok-func: #1d4ed8;
+    --tok-ident: #1c1917;
 }
 
-body {
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #131312;
+        --card: #1b1b1a;
+        --ink: #ecebe9;
+        --muted: #9a958f;
+        --line: #2c2b29;
+        --accent: #2dd4bf;
+        --accent-ink: #042f2a;
+        --danger: #f87171;
+        --code-bg: #161615;
+
+        --tok-keyword: #c4a7ff;
+        --tok-string: #7ee2a8;
+        --tok-number: #fbbf77;
+        --tok-comment: #7d7871;
+        --tok-operator: #fb923c;
+        --tok-punct: #a39e97;
+        --tok-builtin: #7cc4f5;
+        --tok-func: #93b4ff;
+        --tok-ident: #ecebe9;
+    }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
     margin: 0;
-    color: white;
-    font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-@font-face {
-    font-family: "Nunito";
-    font-style: normal;
-    font-weight: 400;
-    src: local(""),
-    url("assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
+/* top bar */
+.bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+}
+.brand { margin: 0 8px 0 0; font-size: 15px; font-weight: 600; letter-spacing: 0.02em; }
+.search {
+    flex: 1 1 220px;
+    max-width: 360px;
+    padding: 7px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--ink);
+    font: inherit;
+}
+.search:focus, .select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.select {
+    padding: 7px 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--ink);
+    font: inherit;
+}
+.pill, .segmented button, .btn {
+    font: inherit;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line);
+    cursor: pointer;
+}
+.pill { padding: 7px 12px; border-radius: 999px; }
+.pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.count { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.segmented { display: inline-flex; }
+.segmented button { padding: 7px 14px; }
+.segmented button:first-child { border-radius: 8px 0 0 8px; }
+.segmented button:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
+.segmented button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+
+.note {
+    margin: 12px 24px 0;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    background: var(--card);
 }
 
-#app {
-    height: 100vh;
-    text-align: center;
+/* layouts */
+main { padding: 20px 24px 48px; }
+main.list { display: flex; flex-direction: column; gap: 16px; max-width: 980px; margin: 0 auto; }
+main.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+.empty { text-align: center; color: var(--muted); margin-top: 64px; }
+
+/* cards */
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 18px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    min-width: 0;
 }
+.card-head { display: flex; align-items: center; gap: 10px; }
+.titles { flex: 1; min-width: 0; }
+.titles h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.card-meta { color: var(--muted); font-size: 12px; }
+.card-desc { margin: 0; color: var(--muted); }
+.grid .card-desc { display: none; }
+.badge {
+    padding: 2px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 12px;
+    white-space: nowrap;
+}
+.btn { padding: 6px 14px; border-radius: 8px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:disabled { opacity: 0.6; cursor: progress; }
+.card-error { color: var(--danger); font-size: 13px; }
+
+/* snippet */
+.snippet {
+    position: relative;
+    margin: 0;
+    padding: 12px 14px;
+    overflow: hidden;
+    max-height: 30em;
+    border-radius: 8px;
+    background: var(--code-bg);
+    font-family: ui-monospace, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    font-variant-ligatures: normal;
+    font-feature-settings: "liga", "calt";
+    tab-size: 4;
+    cursor: pointer;
+}
+.grid .snippet { max-height: 17em; font-size: 12.5px; }
+.snippet code { font: inherit; }
+.snippet:not(.expanded)::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3em;
+    background: linear-gradient(transparent, var(--code-bg));
+    pointer-events: none;
+}
+.snippet.expanded { max-height: none; overflow-x: auto; }
+.snippet[data-state="idle"], .snippet[data-state="loading"] { opacity: 0.45; }
+.snippet[data-state="loading"] { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+
+.tok-keyword { color: var(--tok-keyword); font-weight: 700; }
+.tok-string { color: var(--tok-string); }
+.tok-number { color: var(--tok-number); }
+.tok-comment { color: var(--tok-comment); font-style: italic; }
+.tok-operator { color: var(--tok-operator); }
+.tok-punct { color: var(--tok-punct); }
+.tok-builtin { color: var(--tok-builtin); }
+.tok-func { color: var(--tok-func); }
+.tok-ident { color: var(--tok-ident); }

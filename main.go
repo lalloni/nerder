@@ -36,7 +36,7 @@ func main() {
 		Height: 800,
 		AssetServer: &assetserver.Options{
 			Assets:  assets,
-			Handler: a.FontHandler(),
+			Handler: app.NewFontHandler(a),
 		},
 		BackgroundColour: &options.RGBA{R: 250, G: 250, B: 249, A: 1},
 		OnStartup:        a.Startup,

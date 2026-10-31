@@ -6,7 +6,27 @@
     <title>nerder</title>
 </head>
 <body>
-<div id="app"></div>
+<header class="bar">
+    <h1 class="brand">nerder</h1>
+    <input id="search" class="search" type="search" placeholder="Search fonts" autocomplete="off" spellcheck="false" autofocus/>
+    <button id="installed-only" class="pill" type="button" aria-pressed="false">Installed</button>
+    <select id="mono" class="select" aria-label="Spacing">
+        <option value="">All spacing</option>
+        <option value="mono">Monospaced</option>
+        <option value="nonmono">Proportional</option>
+    </select>
+    <select id="license" class="select" aria-label="License">
+        <option value="">Any license</option>
+    </select>
+    <span id="count" class="count"></span>
+    <div class="segmented" role="group" aria-label="Layout">
+        <button id="mode-list" type="button" data-mode="list">List</button>
+        <button id="mode-grid" type="button" data-mode="grid">Grid</button>
+    </div>
+</header>
+<div id="note" class="note" hidden></div>
+<main id="cards" class="list"></main>
+<p id="empty" class="empty" hidden>No fonts match.</p>
 <script src="./src/main.js" type="module"></script>
 </body>
 </html>

@@ -114,7 +114,7 @@ func TestFontHandlerServesCachedFileOnly(t *testing.T) {
 	if _, err := fx.app.Preview("Hack"); err != nil {
 		t.Fatal(err)
 	}
-	h := fx.app.FontHandler()
+	h := NewFontHandler(fx.app)
 	get := func(path string) *httptest.ResponseRecorder {
 		rec := httptest.NewRecorder()
 		h.ServeHTTP(rec, httptest.NewRequest("GET", path, nil))
