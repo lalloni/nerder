@@ -41,3 +41,14 @@ dev: _cache
 # Regenerate internal/catalog/stats.json (glyphs, downloads, stars, Google Fonts rank); needs network, and a `gh` login for rate limits
 snapshot: _cache
     {{ctr}} -e GITHUB_TOKEN="$(gh auth token 2>/dev/null)" {{image}} go run ./tools/snapshot
+
+# Install the desktop entry and icon in ~/.local/share so taskbars show the app icon (run after `just build`)
+install-desktop:
+    install -Dm644 build/appicon.png ~/.local/share/icons/hicolor/512x512/apps/nerder.png
+    mkdir -p ~/.local/share/applications
+    printf '%s\n' '[Desktop Entry]' 'Type=Application' 'Name=nerder' \
+        'Comment=Browse and install Nerd Fonts' 'Exec={{justfile_directory()}}/build/bin/nerder' \
+        'Icon=nerder' 'Terminal=false' 'Categories=Utility;Development;' 'StartupWMClass=nerder' \
+        > ~/.local/share/applications/nerder.desktop
+    -update-desktop-database ~/.local/share/applications
+    -gtk-update-icon-cache -f -t ~/.local/share/icons/hicolor

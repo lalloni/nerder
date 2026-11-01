@@ -10,6 +10,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	wailsruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"nerder/internal/app"
@@ -21,6 +22,9 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
+
+//go:embed build/appicon.png
+var icon []byte
 
 func main() {
 	cat, err := catalog.Load()
@@ -52,6 +56,14 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets:  assets,
 			Handler: app.NewFontHandler(a),
+		},
+		Linux: &linux.Options{
+			Icon: icon,
+			// Wayland and the desktop entry identify the app by this name;
+			// it matches nerder.desktop (just install-desktop).
+			ProgramName: "nerder",
+			// Setting Linux options changes the GPU default, so keep Wails' own.
+			WebviewGpuPolicy: linux.WebviewGpuPolicyNever,
 		},
 		BackgroundColour: &options.RGBA{R: 250, G: 250, B: 249, A: 1},
 		OnStartup: func(ctx context.Context) {
