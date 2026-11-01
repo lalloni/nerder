@@ -37,3 +37,7 @@ shell: _cache
 # Live-reloading UI served to a host browser at http://localhost:34115
 dev: _cache
     {{ctr}} --init --name nerder-dev --network host {{image}} xvfb-run -a wails dev -tags {{tags}}
+
+# Regenerate internal/catalog/stats.json (glyphs, downloads, stars, Google Fonts rank); needs network, and a `gh` login for rate limits
+snapshot: _cache
+    {{ctr}} -e GITHUB_TOKEN="$(gh auth token 2>/dev/null)" {{image}} go run ./tools/snapshot

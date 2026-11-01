@@ -1,0 +1,371 @@
+{
+  "asOf": "2026-11-01",
+  "stats": {
+    "0xProto": {
+      "glyphs": 11777,
+      "downloads": 25991,
+      "stars": 2952
+    },
+    "3270": {
+      "glyphs": 13170,
+      "downloads": 11313,
+      "stars": 2016
+    },
+    "AdwaitaMono": {
+      "glyphs": 19343,
+      "downloads": 7968,
+      "stars": 24
+    },
+    "Agave": {
+      "glyphs": 13101,
+      "downloads": 6373,
+      "stars": 1087
+    },
+    "AnnotationMono": {
+      "glyphs": 12050,
+      "downloads": 4955
+    },
+    "AnonymousPro": {
+      "glyphs": 11616,
+      "downloads": 4746,
+      "gfRank": 417
+    },
+    "Arimo": {
+      "glyphs": 13916,
+      "downloads": 3463,
+      "gfRank": 13
+    },
+    "AtkinsonHyperlegibleMono": {
+      "glyphs": 11405,
+      "downloads": 3939,
+      "stars": 91,
+      "gfRank": 917
+    },
+    "AurulentSansMono": {
+      "glyphs": 11307,
+      "downloads": 2614
+    },
+    "BigBlueTerminal": {
+      "glyphs": 11280,
+      "downloads": 6306
+    },
+    "BitstreamVeraSansMono": {
+      "glyphs": 11309,
+      "downloads": 4967
+    },
+    "CascadiaCode": {
+      "glyphs": 14938,
+      "downloads": 40229,
+      "stars": 27950,
+      "gfRank": 1298
+    },
+    "CascadiaMono": {
+      "glyphs": 14938,
+      "downloads": 11970,
+      "stars": 27950,
+      "gfRank": 1576
+    },
+    "CodeNewRoman": {
+      "glyphs": 13722,
+      "downloads": 4749
+    },
+    "ComicShannsMono": {
+      "glyphs": 11375,
+      "downloads": 5833,
+      "stars": 1328
+    },
+    "CommitMono": {
+      "glyphs": 12535,
+      "downloads": 5399,
+      "stars": 2199
+    },
+    "Cousine": {
+      "glyphs": 13330,
+      "downloads": 3697,
+      "gfRank": 80
+    },
+    "D2Coding": {
+      "glyphs": 36637,
+      "downloads": 4024,
+      "stars": 2280
+    },
+    "DaddyTimeMono": {
+      "glyphs": 11806,
+      "downloads": 3111
+    },
+    "DejaVuSansMono": {
+      "glyphs": 14256,
+      "downloads": 7766,
+      "stars": 946
+    },
+    "DepartureMono": {
+      "glyphs": 12059,
+      "downloads": 8021,
+      "stars": 3622
+    },
+    "DroidSansMono": {
+      "glyphs": 11940,
+      "downloads": 4102
+    },
+    "EnvyCodeR": {
+      "glyphs": 11638,
+      "downloads": 3613
+    },
+    "FantasqueSansMono": {
+      "glyphs": 11911,
+      "downloads": 5319,
+      "stars": 7471
+    },
+    "FiraCode": {
+      "glyphs": 12885,
+      "downloads": 79998,
+      "stars": 82163,
+      "gfRank": 217
+    },
+    "FiraMono": {
+      "glyphs": 12372,
+      "downloads": 10111,
+      "stars": 5132,
+      "gfRank": 103
+    },
+    "GeistMono": {
+      "glyphs": 12039,
+      "downloads": 7304,
+      "stars": 3707,
+      "gfRank": 130
+    },
+    "Go-Mono": {
+      "glyphs": 11703,
+      "downloads": 3960
+    },
+    "Gohu": {
+      "glyphs": 11234,
+      "downloads": 4513,
+      "stars": 406
+    },
+    "GoogleSansCode": {
+      "glyphs": 11573,
+      "downloads": 6262,
+      "stars": 2570,
+      "gfRank": 245
+    },
+    "Hack": {
+      "glyphs": 12440,
+      "downloads": 36307,
+      "stars": 17379
+    },
+    "Hasklig": {
+      "glyphs": 12483,
+      "downloads": 3810,
+      "stars": 5712
+    },
+    "HeavyData": {
+      "glyphs": 10867,
+      "downloads": 2797
+    },
+    "Hermit": {
+      "glyphs": 11408,
+      "downloads": 5382,
+      "stars": 550
+    },
+    "IBMPlexMono": {
+      "glyphs": 12005,
+      "downloads": 8675,
+      "stars": 11735,
+      "gfRank": 65
+    },
+    "Inconsolata": {
+      "glyphs": 11845,
+      "downloads": 6973,
+      "stars": 1566,
+      "gfRank": 17
+    },
+    "InconsolataGo": {
+      "glyphs": 11343,
+      "downloads": 4677
+    },
+    "InconsolataLGC": {
+      "glyphs": 14146,
+      "downloads": 2437,
+      "stars": 238
+    },
+    "IntelOneMono": {
+      "glyphs": 11918,
+      "downloads": 3565,
+      "stars": 10202,
+      "gfRank": 283
+    },
+    "Iosevka": {
+      "glyphs": 57317,
+      "downloads": 28555,
+      "stars": 23197
+    },
+    "IosevkaTerm": {
+      "glyphs": 57317,
+      "downloads": 9123,
+      "stars": 23197
+    },
+    "IosevkaTermSlab": {
+      "glyphs": 57320,
+      "downloads": 4186,
+      "stars": 23197
+    },
+    "JetBrainsMono": {
+      "glyphs": 12608,
+      "downloads": 193266,
+      "stars": 13137,
+      "gfRank": 6
+    },
+    "Lekton": {
+      "glyphs": 11990,
+      "downloads": 2938,
+      "gfRank": 146
+    },
+    "LiberationMono": {
+      "glyphs": 13414,
+      "downloads": 4925,
+      "stars": 596
+    },
+    "Lilex": {
+      "glyphs": 12304,
+      "downloads": 3807,
+      "stars": 1788,
+      "gfRank": 349
+    },
+    "MPlus": {
+      "glyphs": 17629,
+      "downloads": 2533,
+      "stars": 1251
+    },
+    "MartianMono": {
+      "glyphs": 11846,
+      "downloads": 3668,
+      "stars": 2745,
+      "gfRank": 589
+    },
+    "Meslo": {
+      "glyphs": 13579,
+      "downloads": 61732,
+      "stars": 2741
+    },
+    "Monaspace": {
+      "glyphs": 14398,
+      "downloads": 6092,
+      "stars": 19769
+    },
+    "Monofur": {
+      "glyphs": 11661,
+      "downloads": 3508
+    },
+    "Monoid": {
+      "glyphs": 11817,
+      "downloads": 2829,
+      "stars": 7952
+    },
+    "Mononoki": {
+      "glyphs": 11793,
+      "downloads": 4947,
+      "stars": 4642
+    },
+    "NerdFontsSymbolsOnly": {
+      "glyphs": 10627,
+      "downloads": 28623
+    },
+    "Noto": {
+      "glyphs": 11937,
+      "downloads": 5358,
+      "stars": 2500,
+      "gfRank": 65
+    },
+    "OpenDyslexic": {
+      "glyphs": 11156,
+      "downloads": 3306,
+      "stars": 798
+    },
+    "Overpass": {
+      "glyphs": 11897,
+      "downloads": 2353,
+      "stars": 2103,
+      "gfRank": 127
+    },
+    "ProFont": {
+      "glyphs": 11300,
+      "downloads": 3484
+    },
+    "ProggyClean": {
+      "glyphs": 11312,
+      "downloads": 3360,
+      "stars": 917
+    },
+    "Recursive": {
+      "glyphs": 12381,
+      "downloads": 2895,
+      "stars": 3918,
+      "gfRank": 727
+    },
+    "RobotoMono": {
+      "glyphs": 12040,
+      "downloads": 9047,
+      "stars": 172,
+      "gfRank": 5
+    },
+    "ShareTechMono": {
+      "glyphs": 11307,
+      "downloads": 2952,
+      "gfRank": 284
+    },
+    "SourceCodePro": {
+      "glyphs": 12442,
+      "downloads": 10349,
+      "stars": 20459,
+      "gfRank": 21
+    },
+    "SpaceMono": {
+      "glyphs": 11802,
+      "downloads": 4301,
+      "stars": 429,
+      "gfRank": 149
+    },
+    "Terminus": {
+      "glyphs": 11985,
+      "downloads": 6680
+    },
+    "Tinos": {
+      "glyphs": 13188,
+      "downloads": 2853,
+      "gfRank": 253
+    },
+    "Ubuntu": {
+      "glyphs": 11871,
+      "downloads": 6303,
+      "gfRank": 32
+    },
+    "UbuntuMono": {
+      "glyphs": 12277,
+      "downloads": 10557,
+      "gfRank": 63
+    },
+    "UbuntuSans": {
+      "glyphs": 12343,
+      "downloads": 5446,
+      "stars": 102,
+      "gfRank": 634
+    },
+    "VictorMono": {
+      "glyphs": 12297,
+      "downloads": 5446,
+      "stars": 3825,
+      "gfRank": 206
+    },
+    "ZedMono": {
+      "glyphs": 35304,
+      "downloads": 4767,
+      "stars": 1051
+    },
+    "iA-Writer": {
+      "glyphs": 11807,
+      "downloads": 2570,
+      "stars": 4185
+    }
+  }
+}
