@@ -32,6 +32,8 @@ just test           # go test ./... in the container
 just test-internal  # pure-Go packages only, on the host
 just dev            # live-reloading UI at http://localhost:34115
 just shell          # shell inside the build container
+just install-desktop # desktop entry + icon in ~/.local/share, for the taskbar icon
+just snapshot       # regenerate glyph counts, downloads, stars, Google Fonts rank (needs network)
 ```
 
 `just dev` runs `wails dev` under Xvfb in the container; open
@@ -55,3 +57,8 @@ Archive availability can be checked against GitHub with
 Replace `internal/catalog/fonts.json` with the file from the new release tag,
 change `ReleaseTag` in `internal/catalog/catalog.go`, and update the expected
 family count in the catalog tests.
+Then run `just snapshot` to refresh `internal/catalog/stats.json`: glyph counts,
+release-archive downloads, the GitHub stars of each upstream
+project and the Google Fonts popularity rank. These are embedded in the binary, so
+the numbers are as of the last snapshot. Which repo belongs to which font is in
+`internal/catalog/upstream.json`; fonts without a clean upstream repo show no stars.
