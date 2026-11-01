@@ -70,7 +70,13 @@ jobs:
           if [ "$RUNNER_OS" = macOS ]; then
             ditto -c -k --keepParent build/bin/nerder.app "dist/nerder-${{ matrix.name }}.zip"
           else
-            tar -C build/bin -czf "dist/nerder-${{ matrix.name }}.tar.gz" nerder
+            pkg="nerder-${{ matrix.name }}"
+            mkdir "dist/$pkg"
+            install -m755 build/bin/nerder "dist/$pkg/nerder"
+            install -m644 build/appicon.png "dist/$pkg/nerder.png"
+            install -m755 packaging/linux/install.sh packaging/linux/uninstall.sh "dist/$pkg/"
+            tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
+            rm -r "dist/$pkg"
           fi
       - uses: actions/upload-artifact@v7
         with:

@@ -63,22 +63,12 @@ snapshot: _cache
 snapshot:
     GITHUB_TOKEN="$(gh auth token 2>/dev/null)" go run ./tools/snapshot
 
-# Build, then install the app for the current user: binary in ~/.local/bin, icon and desktop entry in ~/.local/share
+# Build, then install the app for the current user (binary in ~/.local/bin, icon and desktop entry in ~/.local/share)
 [linux]
 desktop-install: build
-    install -Dm755 build/bin/nerder "$HOME/.local/bin/nerder"
-    install -Dm644 build/appicon.png "$HOME/.local/share/icons/hicolor/512x512/apps/nerder.png"
-    mkdir -p "$HOME/.local/share/applications"
-    printf '%s\n' '[Desktop Entry]' 'Type=Application' 'Name=nerder' \
-        'Comment=Browse and install Nerd Fonts' "Exec=$HOME/.local/bin/nerder" \
-        'Icon=nerder' 'Terminal=false' 'Categories=Utility;Development;' 'StartupWMClass=nerder' \
-        > "$HOME/.local/share/applications/nerder.desktop"
-    -update-desktop-database "$HOME/.local/share/applications"
-    -gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor"
+    sh packaging/linux/install.sh build/bin/nerder build/appicon.png
 
 # Remove what desktop-install added
 [linux]
 desktop-uninstall:
-    rm -f "$HOME/.local/bin/nerder" "$HOME/.local/share/applications/nerder.desktop" "$HOME/.local/share/icons/hicolor/512x512/apps/nerder.png"
-    -update-desktop-database "$HOME/.local/share/applications"
-    -gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor"
+    sh packaging/linux/uninstall.sh
