@@ -77,15 +77,7 @@ html, body {
     color: var(--ink);
     font: inherit;
 }
-.search:focus, .select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.select {
-    padding: 7px 8px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: var(--card);
-    color: var(--ink);
-    font: inherit;
-}
+.search:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .pill, .segmented button, .btn {
     font: inherit;
     color: var(--ink);
@@ -96,6 +88,10 @@ html, body {
 .pill { padding: 7px 12px; border-radius: 999px; }
 .pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .count { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.size { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+.size[hidden] { display: none; }
+.size output { min-width: 6ch; font-variant-numeric: tabular-nums; }
+.size input { width: 120px; accent-color: var(--accent); }
 .segmented { display: inline-flex; }
 .segmented button { padding: 7px 14px; }
 .segmented button:first-child { border-radius: 8px 0 0 8px; }
@@ -113,8 +109,8 @@ html, body {
 
 /* layouts */
 main { padding: 20px 24px 48px; }
-main.list { display: flex; flex-direction: column; gap: 16px; max-width: 980px; margin: 0 auto; }
-main.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+main.list { display: flex; flex-direction: column; gap: 16px; }
+main.grid { --card-min: 380px; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr)); gap: 16px; }
 .empty { text-align: center; color: var(--muted); margin-top: 64px; }
 
 /* cards */
@@ -132,8 +128,6 @@ main.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px
 .titles { flex: 1; min-width: 0; }
 .titles h2 { margin: 0; font-size: 16px; font-weight: 600; }
 .card-meta { color: var(--muted); font-size: 12px; }
-.card-desc { margin: 0; color: var(--muted); }
-.grid .card-desc { display: none; }
 .badge {
     padding: 2px 9px;
     border-radius: 999px;
@@ -147,24 +141,46 @@ main.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px
 .btn:disabled { opacity: 0.6; cursor: progress; }
 .card-error { color: var(--danger); font-size: 13px; }
 
+/* specimen: the nerdfonts.com card block, set in the previewed font */
+.sample { font-family: ui-monospace, monospace; }
+.sample-title { font-size: calc(var(--code-size, 12pt) * 1.9); line-height: 1.2; margin-bottom: 0.4em; }
+.sample pre {
+    margin: 0;
+    font: inherit;
+    font-size: var(--code-size, 12pt);
+    line-height: 1.25;
+    font-variant-ligatures: normal;
+    font-feature-settings: "liga", "calt";
+}
+.sample[data-state="idle"], .sample[data-state="loading"] { opacity: 0.45; }
+.list .specimen { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 48px; align-items: start; }
+.list .facts { margin-top: 0.5em; }
+.facts { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.facts a { color: var(--accent); text-decoration: none; }
+.facts a:hover { text-decoration: underline; }
+.facts b { color: var(--ink); font-weight: 600; }
+
 /* snippet */
 .snippet {
     position: relative;
     margin: 0;
     padding: 12px 14px;
     overflow: hidden;
-    max-height: 30em;
+    max-height: var(--list-h, 420px);
     border-radius: 8px;
     background: var(--code-bg);
     font-family: ui-monospace, monospace;
-    font-size: 14px;
+    font-size: var(--code-size, 12pt);
     line-height: 1.5;
     font-variant-ligatures: normal;
     font-feature-settings: "liga", "calt";
     tab-size: 4;
     cursor: pointer;
 }
-.grid .snippet { max-height: 17em; font-size: 12.5px; }
+/* list: the preview flows into as many columns as the width allows; Height sets the column length */
+.list .snippet { height: var(--list-h, 420px); max-height: none; column-width: 76ch; column-gap: 32px; column-fill: auto; }
+.list .snippet.expanded { height: auto; column-fill: balance; overflow: hidden; }
+.grid .snippet { max-height: 17em; }
 .snippet code { font: inherit; }
 .snippet:not(.expanded)::after {
     content: "";

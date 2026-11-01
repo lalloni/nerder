@@ -1,9 +1,9 @@
 import './style.css';
-import {Install, Licenses, List, Preview, Snippet, Uninstall} from '../wailsjs/go/app/App';
+import {Install, List, OpenUpstream, Preview, Snippet, Uninstall} from '../wailsjs/go/app/App';
 
 const $ = (sel) => document.querySelector(sel);
 const cards = $('#cards');
-const query = {text: '', installedOnly: false, mono: '', license: ''};
+const query = {text: '', installedOnly: false, mono: 'mono', sort: 'name'};
 let snippetHTML = '';
 let seq = 0; // guards against out-of-order List responses
 
@@ -17,10 +17,26 @@ const store = {
 // --- layout mode ---------------------------------------------------------
 function setMode(mode) {
     cards.className = mode;
-    for (const b of document.querySelectorAll('.segmented button')) {
+    for (const b of document.querySelectorAll('#layout button')) {
         b.setAttribute('aria-pressed', String(b.dataset.mode === mode));
     }
+    $('#size-wrap').hidden = mode !== 'grid';
+    $('#height-wrap').hidden = mode !== 'list';
     store.set('mode', mode);
+}
+
+// --- card size sliders (font size; grid: card width, list: preview height) -------------
+function bindSlider(sel, key, cssVar, label, unit = 'px') {
+    const input = $(sel);
+    const apply = () => {
+        cards.style.setProperty(cssVar, `${input.value}${unit}`);
+        if (label) label.textContent = `${input.value}${unit}`;
+    };
+    const saved = Number(store.get(key));
+    if (saved >= Number(input.min) && saved <= Number(input.max)) input.value = String(saved);
+    // persist only what the user chose, so a changed default is not masked by an old one
+    input.addEventListener('input', () => { apply(); store.set(key, input.value); });
+    apply();
 }
 
 // --- font loading (lazy, one request per family) --------------------------
@@ -44,14 +60,15 @@ function ensureFont(folder) {
 
 async function loadPreview(card) {
     const pre = card.querySelector('.snippet');
+    const sample = card.querySelector('.sample');
     card.querySelector('.card-error')?.remove();
-    pre.dataset.state = 'loading';
+    pre.dataset.state = sample.dataset.state = 'loading';
     try {
         const info = await ensureFont(card.dataset.folder);
-        pre.style.fontFamily = `"${info.fontFamily}", monospace`;
-        pre.dataset.state = 'ready';
+        pre.style.fontFamily = sample.style.fontFamily = `"${info.fontFamily}", monospace`;
+        pre.dataset.state = sample.dataset.state = 'ready';
     } catch (err) {
-        pre.dataset.state = 'error';
+        pre.dataset.state = sample.dataset.state = 'error';
         const msg = document.createElement('div');
         msg.className = 'card-error';
         msg.innerHTML = `${esc(String(err))} <button class="btn" type="button">Retry</button>`;
@@ -69,18 +86,38 @@ const observer = new IntersectionObserver((entries) => {
 }, {rootMargin: '200px'});
 
 // --- cards ---------------------------------------------------------------
+const SAMPLE = [
+    'abcdefghijklmnopqrstuvwxyz [0xX]',
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ (0xX)',
+    'oO08 iIlL1 g9qCGQ ~-+=>    {0xX}',
+].join('\n');
+
+// Mirrors a card on nerdfonts.com/font-downloads: title and sample in the font,
+// then the original/reserved name, version and info.
 function cardHTML(f) {
     const spacing = f.monospaced ? 'monospaced' : 'proportional';
+    const note = f.nameKind ? `<div><b>${f.nameKind} Font Name:</b> ${esc(f.nameValue)}</div>` : '';
     return `
     <header class="card-head">
         <div class="titles">
             <h2>${esc(f.name)}</h2>
-            <div class="card-meta">${esc(f.license)} · v${esc(f.version)} · ${spacing}</div>
+            <div class="card-meta">${esc(f.license)} · ${spacing}</div>
         </div>
         <span class="badges"></span>
         <span class="actions"></span>
     </header>
-    <p class="card-desc">${esc(f.description)}</p>
+    <section class="specimen">
+        <div class="sample" data-state="idle"><div class="sample-title">${esc(f.heading)}</div><pre>${esc(SAMPLE)}</pre></div>
+        <div class="facts">
+            <div><b>Info:</b> ${esc(f.description)}</div>
+            ${note}
+            <div><b>Version:</b> ${esc(f.version)}</div>
+            <div><b>Glyphs:</b> ${f.glyphs ? f.glyphs.toLocaleString() : 'unknown'}</div>
+            <div><b>Downloads:</b> ${f.downloads.toLocaleString()}</div>
+            ${f.repo ? `<div><b>Upstream:</b> <a class="upstream" href="https://github.com/${esc(f.repo)}">${esc(f.repo)}</a>${f.stars ? ` · ★ ${f.stars.toLocaleString()}` : ''}</div>` : ''}
+            ${f.gfRank ? `<div><b>Google Fonts rank:</b> #${f.gfRank.toLocaleString()}</div>` : ''}
+        </div>
+    </section>
     <pre class="snippet" data-state="idle" title="Click to expand"><code>${snippetHTML}</code></pre>`;
 }
 
@@ -132,7 +169,7 @@ async function act(card, button) {
 }
 
 async function syncStatuses() {
-    const all = await List({text: '', installedOnly: false, mono: '', license: ''});
+    const all = await List({text: '', installedOnly: false, mono: ''});
     for (const f of all) {
         const card = cards.querySelector(`[data-folder="${CSS.escape(f.folder)}"]`);
         if (card) setStatus(card, f.status);
@@ -165,13 +202,18 @@ async function refresh() {
 }
 
 // --- startup -------------------------------------------------------------
+// External links open in the system browser, not inside the app window.
+cards.addEventListener('click', (e) => {
+    const link = e.target.closest('a.upstream');
+    if (!link) return;
+    e.preventDefault();
+    OpenUpstream(link.closest('.card').dataset.folder).catch((err) => showNote(String(err)));
+});
+
 async function main() {
     const spans = await Snippet();
     snippetHTML = spans.map((s) => `<span class="tok-${s.class}">${esc(s.text)}</span>`).join('');
 
-    for (const l of await Licenses()) {
-        $('#license').append(new Option(l, l));
-    }
     let timer;
     $('#search').addEventListener('input', (e) => {
         clearTimeout(timer);
@@ -182,11 +224,26 @@ async function main() {
         e.currentTarget.setAttribute('aria-pressed', String(query.installedOnly));
         refresh();
     });
-    $('#mono').addEventListener('change', (e) => { query.mono = e.target.value; refresh(); });
-    $('#license').addEventListener('change', (e) => { query.license = e.target.value; refresh(); });
-    for (const b of document.querySelectorAll('.segmented button')) {
+    for (const b of document.querySelectorAll('#sort button')) {
+        b.addEventListener('click', () => {
+            query.sort = b.dataset.sort;
+            for (const o of document.querySelectorAll('#sort button')) o.setAttribute('aria-pressed', String(o === b));
+            refresh();
+        });
+    }
+    for (const b of document.querySelectorAll('#spacing button')) {
+        b.addEventListener('click', () => {
+            query.mono = b.dataset.mono;
+            for (const o of document.querySelectorAll('#spacing button')) o.setAttribute('aria-pressed', String(o === b));
+            refresh();
+        });
+    }
+    for (const b of document.querySelectorAll('#layout button')) {
         b.addEventListener('click', () => setMode(b.dataset.mode));
     }
+    bindSlider('#font-size', 'fontPt', '--code-size', $('#font-size-value'), 'pt');
+    bindSlider('#size', 'gridCardWidth', '--card-min');
+    bindSlider('#height', 'listPreviewHeight', '--list-h');
     setMode(store.get('mode') === 'grid' ? 'grid' : 'list');
     await refresh();
 }

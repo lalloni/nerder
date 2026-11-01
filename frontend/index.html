@@ -10,16 +10,33 @@
     <h1 class="brand">nerder</h1>
     <input id="search" class="search" type="search" placeholder="Search fonts" autocomplete="off" spellcheck="false" autofocus/>
     <button id="installed-only" class="pill" type="button" aria-pressed="false">Installed</button>
-    <select id="mono" class="select" aria-label="Spacing">
-        <option value="">All spacing</option>
-        <option value="mono">Monospaced</option>
-        <option value="nonmono">Proportional</option>
-    </select>
-    <select id="license" class="select" aria-label="License">
-        <option value="">Any license</option>
-    </select>
+    <div id="spacing" class="segmented" role="group" aria-label="Spacing">
+        <button type="button" data-mono="" aria-pressed="false">All</button>
+        <button type="button" data-mono="mono" aria-pressed="true">Mono</button>
+        <button type="button" data-mono="nonmono" aria-pressed="false">Proportional</button>
+    </div>
+    <div id="sort" class="segmented" role="group" aria-label="Sort by">
+        <button type="button" data-sort="name" aria-pressed="true">A–Z</button>
+        <button type="button" data-sort="glyphs" aria-pressed="false">Glyphs</button>
+        <button type="button" data-sort="downloads" aria-pressed="false">Downloads</button>
+        <button type="button" data-sort="stars" aria-pressed="false">Stars</button>
+        <button type="button" data-sort="gfrank" aria-pressed="false">Google rank</button>
+    </div>
     <span id="count" class="count"></span>
-    <div class="segmented" role="group" aria-label="Layout">
+    <label class="size">
+        <span>Font</span>
+        <input id="font-size" type="range" min="7" max="21" step="1" value="12" aria-label="Code font size"/>
+        <output id="font-size-value" for="font-size">12pt</output>
+    </label>
+    <label id="height-wrap" class="size" hidden>
+        <span>Height</span>
+        <input id="height" type="range" min="120" max="700" step="10" value="420" aria-label="Card height"/>
+    </label>
+    <label id="size-wrap" class="size" hidden>
+        <span>Size</span>
+        <input id="size" type="range" min="300" max="640" step="10" value="380" aria-label="Card size"/>
+    </label>
+    <div id="layout" class="segmented" role="group" aria-label="Layout">
         <button id="mode-list" type="button" data-mode="list">List</button>
         <button id="mode-grid" type="button" data-mode="grid">Grid</button>
     </div>
