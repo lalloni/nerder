@@ -198,9 +198,34 @@ func TestRefreshFailureIsReported(t *testing.T) {
 
 func TestDefaultRefreshMissingBinary(t *testing.T) {
 	t.Setenv("PATH", "")
-	cat, _ := catalog.Load()
-	err := New(cat).RefreshCache(t.TempDir())
+	_, _, refresh := defaultsFor("linux", t.TempDir(), "")
+	err := refresh(t.TempDir())
 	if err == nil || !strings.Contains(err.Error(), "fc-cache") {
 		t.Errorf("err = %v, want mention of fc-cache", err)
+	}
+}
+
+func TestDefaultsFor(t *testing.T) {
+	user, system, refresh := defaultsFor("linux", "/home/me", "")
+	if user != "/home/me/.local/share/fonts" || len(system) != 2 || refresh == nil {
+		t.Errorf("linux = %q %q refresh=%v", user, system, refresh != nil)
+	}
+	if user, _, _ := defaultsFor("linux", "/home/me", "/data"); user != "/data/fonts" {
+		t.Errorf("XDG_DATA_HOME ignored: %q", user)
+	}
+	user, system, refresh = defaultsFor("darwin", "/Users/me", "/ignored")
+	if user != "/Users/me/Library/Fonts" || system[0] != "/Library/Fonts" || refresh != nil {
+		t.Errorf("darwin = %q %q refresh=%v", user, system, refresh != nil)
+	}
+}
+
+func TestInstallWithoutCacheRefresh(t *testing.T) {
+	e := newEnv(t)
+	e.in.RefreshCache = nil // macOS
+	if err := e.in.Install("Hack", srcDir(t, "HackNerdFont-Regular.ttf")); err != nil {
+		t.Fatalf("Install without a refresh hook: %v", err)
+	}
+	if err := e.in.Uninstall("Hack"); err != nil {
+		t.Fatalf("Uninstall without a refresh hook: %v", err)
 	}
 }

@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"nerder/internal/catalog"
@@ -29,25 +30,30 @@ const (
 var ErrCacheRefresh = errors.New("font cache refresh failed")
 
 type Installer struct {
-	UserDir      string                 // $XDG_DATA_HOME/fonts, else ~/.local/share/fonts
-	SystemDirs   []string               // /usr/share/fonts, /usr/local/share/fonts
-	RefreshCache func(dir string) error // runs fc-cache -f <dir>
+	UserDir      string                 // Linux: $XDG_DATA_HOME/fonts, else ~/.local/share/fonts; macOS: ~/Library/Fonts
+	SystemDirs   []string               // Linux: /usr/share/fonts, /usr/local/share/fonts; macOS: /Library/Fonts, /System/Library/Fonts
+	RefreshCache func(dir string) error // Linux: fc-cache -f <dir>; nil when the OS needs no refresh (macOS)
 
 	cat *catalog.Catalog
 }
 
 func New(cat *catalog.Catalog) *Installer {
-	data := os.Getenv("XDG_DATA_HOME")
-	if data == "" {
-		home, _ := os.UserHomeDir()
-		data = filepath.Join(home, ".local", "share")
+	home, _ := os.UserHomeDir()
+	user, system, refresh := defaultsFor(runtime.GOOS, home, os.Getenv("XDG_DATA_HOME"))
+	return &Installer{UserDir: user, SystemDirs: system, RefreshCache: refresh, cat: cat}
+}
+
+// defaultsFor returns the fonts locations and cache refresh for an OS. macOS
+// picks up new fonts in ~/Library/Fonts by itself; everything else is treated
+// as fontconfig-based (Linux, BSD).
+func defaultsFor(goos, home, xdgData string) (userDir string, systemDirs []string, refresh func(string) error) {
+	if goos == "darwin" {
+		return filepath.Join(home, "Library", "Fonts"), []string{"/Library/Fonts", "/System/Library/Fonts"}, nil
 	}
-	return &Installer{
-		UserDir:      filepath.Join(data, "fonts"),
-		SystemDirs:   []string{"/usr/share/fonts", "/usr/local/share/fonts"},
-		RefreshCache: fcCache,
-		cat:          cat,
+	if xdgData == "" {
+		xdgData = filepath.Join(home, ".local", "share")
 	}
+	return filepath.Join(xdgData, "fonts"), []string{"/usr/share/fonts", "/usr/local/share/fonts"}, fcCache
 }
 
 func fcCache(dir string) error {
@@ -153,6 +159,9 @@ func (i *Installer) Uninstall(folder string) error {
 }
 
 func (i *Installer) refresh() error {
+	if i.RefreshCache == nil {
+		return nil
+	}
 	if err := i.RefreshCache(i.UserDir); err != nil {
 		return fmt.Errorf("%w: %v", ErrCacheRefresh, err)
 	}
