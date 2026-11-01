@@ -22,6 +22,9 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
+      - name: Lint the shell scripts
+        if: runner.os == 'Linux'
+        run: shellcheck install.sh packaging/linux/install.sh packaging/linux/uninstall.sh
       # The pure-Go packages need no GTK or WebKit, so they run natively on both OSes.
       - run: go vet ./internal/... ./tools/...
       - run: go test -race ./internal/... ./tools/...
@@ -102,10 +105,59 @@ jobs:
           path: dist/*
           if-no-files-found: error
 
+  # Runs the installer against the freshly built packages, served as a fake release.
+  installer:
+    name: installer (${{ matrix.os }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            artifact: nerder-linux-amd64
+            asset: nerder-linux-amd64.tar.gz
+          - os: macos-latest
+            artifact: nerder-macos-universal
+            asset: nerder-macos-universal.zip
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ matrix.artifact }}
+          path: release/v0.0.0-test
+      - name: Serve a fake release
+        run: |
+          (cd release/v0.0.0-test && shasum -a 256 * > SHA256SUMS)
+          cd release && nohup python3 -m http.server 8765 --bind 127.0.0.1 >/dev/null 2>&1 &
+          sleep 2
+      - name: Install on Linux
+        if: runner.os == 'Linux'
+        run: |
+          NERDER_BASE_URL=http://127.0.0.1:8765 sh install.sh --version v0.0.0-test --user
+          test -x "$HOME/.local/bin/nerder"
+          test -f "$HOME/.local/share/applications/nerder.desktop"
+      - name: Install on macOS
+        if: runner.os == 'macOS'
+        run: |
+          NERDER_BASE_URL=http://127.0.0.1:8765 sh install.sh --version v0.0.0-test
+          app=/Applications/nerder.app/Contents/MacOS/nerder
+          test -x "$app"
+          # one app for both Intel and Apple Silicon
+          archs=$(lipo -archs "$app")
+          echo "archs: $archs"
+          case "$archs" in *x86_64*arm64* | *arm64*x86_64*) ;; *) echo "not a universal binary"; exit 1 ;; esac
+      - name: A corrupted download is rejected
+        run: |
+          echo corrupt >> "release/v0.0.0-test/${{ matrix.asset }}"
+          if NERDER_BASE_URL=http://127.0.0.1:8765 sh install.sh --version v0.0.0-test --user; then
+            echo "installer accepted a corrupted file"; exit 1
+          fi
+
   release:
     name: release
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    needs: [build, installer]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -117,4 +169,6 @@ jobs:
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --generate-notes
+        run: |
+          (cd dist && sha256sum * > SHA256SUMS)
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --generate-notes
