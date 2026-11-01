@@ -17,41 +17,39 @@ For Linux (amd64, arm64) and macOS (Intel and Apple Silicon).
 
 ## Install
 
-Download the build for your system from the
-[latest release](https://github.com/lalloni/nerder/releases/latest).
+Packages are attached to each
+[release](https://github.com/lalloni/nerder/releases/latest).
 
-**Debian, Ubuntu and derivatives** (`nerder_<version>_amd64.deb` or `_arm64.deb`)
+### macOS (13 or newer, Intel and Apple Silicon)
 
-```
-sudo apt install ./nerder_0.1.0_amd64.deb
-```
-
-**Fedora and compatible** (`nerder-<version>-1.x86_64.rpm` or `.aarch64.rpm`)
+With [Homebrew](https://brew.sh):
 
 ```
-sudo dnf install ./nerder-0.1.0-1.x86_64.rpm
+brew install --cask lalloni/tap/nerder
 ```
 
-Both pull in the WebKitGTK 4.1 library they need.
+Or download `nerder-macos-universal.zip` from the release, unzip it and drag
+`nerder.app` to Applications. The app is not signed yet, so the first time,
+right-click it and choose Open (or run
+`xattr -dr com.apple.quarantine /Applications/nerder.app`). Homebrew does that
+for you.
 
-**Any other Linux** (`nerder-linux-amd64.tar.gz` or `nerder-linux-arm64.tar.gz`)
+### Linux
 
-```
-tar xzf nerder-linux-amd64.tar.gz
-cd nerder-linux-amd64
-./install.sh        # adds nerder to your application menu; no root needed
-```
+| Your system | Download | Install |
+|---|---|---|
+| Debian, Ubuntu and derivatives | `nerder_<version>_amd64.deb` or `_arm64.deb` | `sudo apt install ./nerder_<version>_amd64.deb` |
+| Fedora and compatible | `nerder-<version>-1.x86_64.rpm` or `.aarch64.rpm` | `sudo dnf install ./nerder-<version>-1.x86_64.rpm` |
+| Anything else | `nerder-linux-amd64.tar.gz` or `-arm64.tar.gz` | `tar xzf` it, then run `./install.sh` |
 
-or just run `./nerder` from the extracted folder. nerder needs the WebKitGTK 4.1
-library (`libwebkit2gtk-4.1-0` on Debian and Ubuntu, `webkit2gtk4.1` on Fedora,
-`webkit2gtk-4.1` on Arch); `install.sh` tells you if it is missing. Run
-`./uninstall.sh` to remove it again.
+The `.deb` and `.rpm` pull in the WebKitGTK 4.1 library nerder needs. With the
+tarball you install it yourself (`libwebkit2gtk-4.1-0` on Debian and Ubuntu,
+`webkit2gtk4.1` on Fedora, `webkit2gtk-4.1` on Arch); `install.sh` tells you if it
+is missing. It adds nerder to your application menu without root, and
+`./uninstall.sh` removes it again. You can also run `./nerder` straight from the
+extracted folder.
 
-**macOS** (`nerder-macos-universal.zip`, macOS 13 or newer, Intel or Apple Silicon)
-
-Unzip it and drag `nerder.app` to Applications. The app is not signed yet, so the
-first time, right-click it and choose Open (or run
-`xattr -dr com.apple.quarantine /Applications/nerder.app`).
+To remove a package: `sudo apt remove nerder` or `sudo dnf remove nerder`.
 
 ### Where fonts go
 
@@ -103,8 +101,8 @@ your user cache folder.
   an installed font comes from an older release.
 - **More ways to install.** Linux: a Flatpak for Flathub, an AUR package, and a
   hosted apt/dnf repository for automatic updates; an AppImage was considered but
-  WebKitGTK is hard to bundle. macOS: a Homebrew cask in a tap, and
-  code signing and notarization so Gatekeeper stops asking.
+  WebKitGTK is hard to bundle. macOS: code signing and notarization, so
+  Gatekeeper stops asking.
 
 ## Builds and releases
 
@@ -113,7 +111,9 @@ then builds `linux-amd64`, `linux-arm64` and a universal `macos-universal` app o
 native runners and uploads them as workflow artifacts. The Linux archives bundle
 `install.sh` and `uninstall.sh`, and `.deb` and `.rpm` packages are built with
 [nfpm](https://nfpm.goreleaser.com) (config and scripts in `packaging/linux/`).
-Pushing a tag such as `v0.1.0` also publishes the builds as a GitHub release. The `ubuntu-24.04-arm`
+Pushing a tag such as `v0.1.0` also publishes the builds as a GitHub release.
+The Homebrew cask lives in [lalloni/homebrew-tap](https://github.com/lalloni/homebrew-tap),
+where a daily workflow moves it to the latest release. The `ubuntu-24.04-arm`
 runner is free for public repositories only.
 
 ## Developing
