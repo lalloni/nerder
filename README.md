@@ -12,6 +12,10 @@ click. Some terminals and editors still need a restart to pick up a new font.
 Linux (amd64, arm64) and macOS (Intel and Apple Silicon, 13 or newer). Built with
 Go and [Wails](https://wails.io) v2 (WebKitGTK on Linux, WKWebView on macOS).
 
+![List view: each card shows the font's name and sample in the real font, its facts, and the Go snippet](docs/screenshots/list.png)
+
+![Grid view with the same cards side by side](docs/screenshots/grid.png)
+
 ## Using it
 
 ```
