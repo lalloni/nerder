@@ -21,6 +21,9 @@ var Source = strings.NewReplacer(
 	"{GO}", "", "{CODE}", "", "{ARROW}", "", "{TICK}", "`",
 ).Replace(`package main
 
+// ligatures:  :=  <-  ->  !=  ==  <=  >=  &&  ||  ++
+//            --  ...  +=  -=  &^  <<  >>  //  /*  */  =>  ::
+
 import (
 	"context"
 	"fmt"
