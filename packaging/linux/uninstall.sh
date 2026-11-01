@@ -6,7 +6,10 @@ data=${XDG_DATA_HOME:-$HOME/.local/share}
 
 rm -f "$HOME/.local/bin/nerder" \
     "$data/applications/nerder.desktop" \
-    "$data/icons/hicolor/512x512/apps/nerder.png"
+    "$data/icons/hicolor/512x512/apps/nerder.png" \
+    "$data/icons/hicolor/16x16/apps/nerder.png" \
+    "$data/icons/hicolor/22x22/apps/nerder.png" \
+    "$data/icons/hicolor/32x32/apps/nerder.png"
 
 update-desktop-database "$data/applications" 2>/dev/null || true
 gtk-update-icon-cache -f -t "$data/icons/hicolor" 2>/dev/null || true

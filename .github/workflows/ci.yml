@@ -74,6 +74,8 @@ jobs:
             mkdir "dist/$pkg"
             install -m755 build/bin/nerder "dist/$pkg/nerder"
             install -m644 build/appicon.png "dist/$pkg/nerder.png"
+            install -d "dist/$pkg/icons"
+            install -m644 packaging/linux/icons/*.png "dist/$pkg/icons/"
             install -m755 packaging/linux/install.sh packaging/linux/uninstall.sh "dist/$pkg/"
             tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
             rm -r "dist/$pkg"

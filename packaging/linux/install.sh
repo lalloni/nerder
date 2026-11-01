@@ -17,6 +17,11 @@ done
 
 install -Dm755 "$binary" "$bindir/nerder"
 install -Dm644 "$icon" "$data/icons/hicolor/512x512/apps/nerder.png"
+# Simplified faces for small sizes (panels, menus), when shipped beside the script.
+for n in 16 22 32; do
+    [ -f "$here/icons/$n.png" ] &&
+        install -Dm644 "$here/icons/$n.png" "$data/icons/hicolor/${n}x${n}/apps/nerder.png"
+done
 mkdir -p "$data/applications"
 cat > "$data/applications/nerder.desktop" <<EOF
 [Desktop Entry]
@@ -32,6 +37,8 @@ EOF
 
 update-desktop-database "$data/applications" 2>/dev/null || true
 gtk-update-icon-cache -f -t "$data/icons/hicolor" 2>/dev/null || true
+# KDE keeps its own icon cache and ignores the GTK one.
+command -v kbuildsycoca6 >/dev/null 2>&1 && kbuildsycoca6 >/dev/null 2>&1 || true
 
 echo "Installed nerder to $bindir/nerder and added it to your application menu."
 case ":$PATH:" in

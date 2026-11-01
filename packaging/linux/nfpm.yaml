@@ -24,6 +24,18 @@ contents:
     dst: /usr/share/icons/hicolor/512x512/apps/nerder.png
     file_info:
       mode: 0644
+  - src: packaging/linux/icons/16.png
+    dst: /usr/share/icons/hicolor/16x16/apps/nerder.png
+    file_info:
+      mode: 0644
+  - src: packaging/linux/icons/22.png
+    dst: /usr/share/icons/hicolor/22x22/apps/nerder.png
+    file_info:
+      mode: 0644
+  - src: packaging/linux/icons/32.png
+    dst: /usr/share/icons/hicolor/32x32/apps/nerder.png
+    file_info:
+      mode: 0644
 # The WebKitGTK 4.1 library is the only runtime dependency not already implied by GTK.
 overrides:
   deb:
