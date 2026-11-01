@@ -12,6 +12,7 @@ default:
     @just --list
 
 # Build the container image with the GTK/WebKitGTK dev packages, Go, Node and Wails
+[linux]
 image:
     podman build -t {{image}} -f Containerfile .
 
@@ -19,30 +20,51 @@ _cache:
     mkdir -p {{cache}}/home
 
 # Compile the app in the container; the binary lands in build/bin/nerder
+[linux]
 build: _cache
     {{ctr}} {{image}} wails build -tags {{tags}}
 
 # All tests, in the container
+[linux]
 test: _cache
     {{ctr}} {{image}} go test ./...
+
+# macOS builds natively (no container); a universal app for Intel and Apple Silicon lands in build/bin/nerder.app
+[macos]
+build:
+    wails build -platform darwin/universal
+
+# Pure-Go packages, natively
+[macos]
+test:
+    go test ./internal/... ./tools/...
 
 # Pure-Go packages need no GTK, so they can run on the host
 test-internal:
     go test ./internal/...
 
 # Shell inside the build container
+[linux]
 shell: _cache
     {{ctr}} -it {{image}} bash
 
 # Live-reloading UI served to a host browser at http://localhost:34115
+[linux]
 dev: _cache
     {{ctr}} --init --name nerder-dev --network host {{image}} xvfb-run -a wails dev -tags {{tags}}
 
 # Regenerate internal/catalog/stats.json (glyphs, downloads, stars, Google Fonts rank); needs network, and a `gh` login for rate limits
+[linux]
 snapshot: _cache
     {{ctr}} -e GITHUB_TOKEN="$(gh auth token 2>/dev/null)" {{image}} go run ./tools/snapshot
 
+# Same, natively on macOS
+[macos]
+snapshot:
+    GITHUB_TOKEN="$(gh auth token 2>/dev/null)" go run ./tools/snapshot
+
 # Install the desktop entry and icon in ~/.local/share so taskbars show the app icon (run after `just build`)
+[linux]
 install-desktop:
     install -Dm644 build/appicon.png ~/.local/share/icons/hicolor/512x512/apps/nerder.png
     mkdir -p ~/.local/share/applications

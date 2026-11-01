@@ -9,5 +9,12 @@
   "author": {
     "name": "Pablo Lalloni",
     "email": "plalloni@gmail.com"
+  },
+  "info": {
+    "companyName": "Pablo Lalloni",
+    "productName": "nerder",
+    "productVersion": "0.1.0",
+    "copyright": "Copyright \u00a9 Pablo Lalloni",
+    "comments": "Browse and install Nerd Fonts"
   }
 }
