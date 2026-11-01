@@ -60,7 +60,8 @@ html, body {
     z-index: 5;
     display: flex;
     align-items: center;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px 10px;
     padding: 12px 24px;
     background: color-mix(in srgb, var(--bg) 92%, transparent);
     backdrop-filter: blur(8px);
@@ -87,12 +88,13 @@ html, body {
 }
 .pill { padding: 7px 12px; border-radius: 999px; }
 .pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.count { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.count { margin-left: auto; white-space: nowrap; color: var(--muted); font-variant-numeric: tabular-nums; }
 .size { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
 .size[hidden] { display: none; }
 .size output { min-width: 6ch; font-variant-numeric: tabular-nums; }
 .size input { width: 120px; accent-color: var(--accent); }
 .segmented { display: inline-flex; }
+.segmented button, .pill { white-space: nowrap; }
 .segmented button { padding: 7px 14px; }
 .segmented button:first-child { border-radius: 8px 0 0 8px; }
 .segmented button:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
