@@ -21,7 +21,22 @@ For Linux (amd64, arm64) and macOS (Intel and Apple Silicon).
 
 ## Install
 
-Packages are attached to each
+On Linux and macOS, one command picks the right package for your system:
+
+```
+curl -fsSL https://raw.githubusercontent.com/lalloni/nerder/main/install.sh | sh
+```
+
+It installs the `.deb` on Debian and Ubuntu (via `apt`), the `.rpm` on Fedora (via
+`dnf`), the Homebrew cask on a Mac that has Homebrew, and otherwise a per-user
+install with no root. Every download is checked against the release's
+`SHA256SUMS`. Add options after `sh -s --`, for example
+`curl -fsSL ... | sh -s -- --version v0.1.0 --user --dry-run`
+(`--version` pins a release, `--user` installs for yourself without root,
+`--dry-run` only shows what it would do). Read the
+[script](install.sh) first if you like.
+
+To pick a package yourself, they are all attached to each
 [release](https://github.com/lalloni/nerder/releases/latest).
 
 ### macOS (13 or newer, Intel and Apple Silicon)
