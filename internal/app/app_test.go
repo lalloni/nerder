@@ -3,6 +3,7 @@ package app
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -171,5 +172,58 @@ func TestInstallRefreshFailureMessage(t *testing.T) {
 	got, _ := fx.app.List(ListQuery{InstalledOnly: true})
 	if len(got) != 1 || got[0].Folder != "Hack" {
 		t.Errorf("Hack should show as installed after a refresh failure, got %+v", got)
+	}
+}
+
+func TestListSorting(t *testing.T) {
+	fx := newFixture(t)
+	check := func(sort string, less func(a, b FamilyView) bool) {
+		t.Helper()
+		got, err := fx.app.List(ListQuery{Sort: sort})
+		if err != nil || len(got) != 72 {
+			t.Fatalf("List(%s) = %d, %v", sort, len(got), err)
+		}
+		for i := 1; i < len(got); i++ {
+			if less(got[i], got[i-1]) {
+				t.Fatalf("sort %q: %s (%d glyphs, %d downloads) is before %s (%d, %d)", sort,
+					got[i-1].Name, got[i-1].Glyphs, got[i-1].Downloads, got[i].Name, got[i].Glyphs, got[i].Downloads)
+			}
+		}
+	}
+	check("glyphs", func(a, b FamilyView) bool { return a.Glyphs > b.Glyphs })
+	check("downloads", func(a, b FamilyView) bool { return a.Downloads > b.Downloads })
+	check("stars", func(a, b FamilyView) bool { return a.Stars > b.Stars })
+	check("gfrank", func(a, b FamilyView) bool { return a.GFRank > 0 && (b.GFRank == 0 || a.GFRank < b.GFRank) })
+
+	byName, _ := fx.app.List(ListQuery{Sort: "name"})
+	if strings.ToLower(byName[0].Name) > strings.ToLower(byName[1].Name) {
+		t.Errorf("name sort starts %s, %s", byName[0].Name, byName[1].Name)
+	}
+	top, _ := fx.app.List(ListQuery{Sort: "downloads"})
+	if top[0].Folder != "JetBrainsMono" {
+		t.Errorf("most downloaded = %s", top[0].Folder)
+	}
+	ranked, _ := fx.app.List(ListQuery{Sort: "gfrank"})
+	if ranked[0].Folder != "RobotoMono" || ranked[len(ranked)-1].GFRank != 0 {
+		t.Errorf("gfrank order starts %s and ends with rank %d", ranked[0].Folder, ranked[len(ranked)-1].GFRank)
+	}
+}
+
+func TestOpenUpstream(t *testing.T) {
+	fx := newFixture(t)
+	var opened []string
+	fx.app.OpenURL = func(_ context.Context, url string) { opened = append(opened, url) }
+
+	if err := fx.app.OpenUpstream("Hack"); err != nil || len(opened) != 1 || opened[0] != "https://github.com/source-foundry/Hack" {
+		t.Errorf("OpenUpstream(Hack) = %v, opened %v", err, opened)
+	}
+	if err := fx.app.OpenUpstream("Ubuntu"); err == nil {
+		t.Error("a family without an upstream repo should error")
+	}
+	if err := fx.app.OpenUpstream("../../etc"); err == nil {
+		t.Error("unknown folder should error")
+	}
+	if len(opened) != 1 {
+		t.Errorf("only the Hack URL should have been opened, got %v", opened)
 	}
 }

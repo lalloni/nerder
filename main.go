@@ -9,6 +9,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	wailsruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"nerder/internal/app"
 	"nerder/internal/catalog"
@@ -29,6 +30,7 @@ func main() {
 		log.Fatal(err)
 	}
 	a := app.New(cat, fetch.New(filepath.Join(cacheDir, "nerder"), catalog.ReleaseTag), installer.New(cat))
+	a.OpenURL = wailsruntime.BrowserOpenURL
 
 	err = wails.Run(&options.App{
 		Title:  "nerder",

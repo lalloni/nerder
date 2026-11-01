@@ -14,12 +14,20 @@ export function List(arg1) {
   return window['go']['app']['App']['List'](arg1);
 }
 
+export function OpenUpstream(arg1) {
+  return window['go']['app']['App']['OpenUpstream'](arg1);
+}
+
 export function Preview(arg1) {
   return window['go']['app']['App']['Preview'](arg1);
 }
 
 export function Snippet() {
   return window['go']['app']['App']['Snippet']();
+}
+
+export function Startup(arg1) {
+  return window['go']['app']['App']['Startup'](arg1);
 }
 
 export function Uninstall(arg1) {

@@ -8,6 +8,14 @@ export namespace app {
 	    version: string;
 	    monospaced: boolean;
 	    description: string;
+	    heading: string;
+	    nameKind: string;
+	    nameValue: string;
+	    repo: string;
+	    glyphs: number;
+	    stars: number;
+	    downloads: number;
+	    gfRank: number;
 	    status: string;
 	
 	    static createFrom(source: any = {}) {
@@ -23,6 +31,14 @@ export namespace app {
 	        this.version = source["version"];
 	        this.monospaced = source["monospaced"];
 	        this.description = source["description"];
+	        this.heading = source["heading"];
+	        this.nameKind = source["nameKind"];
+	        this.nameValue = source["nameValue"];
+	        this.repo = source["repo"];
+	        this.glyphs = source["glyphs"];
+	        this.stars = source["stars"];
+	        this.downloads = source["downloads"];
+	        this.gfRank = source["gfRank"];
 	        this.status = source["status"];
 	    }
 	}
@@ -31,6 +47,7 @@ export namespace app {
 	    installedOnly: boolean;
 	    mono: string;
 	    license: string;
+	    sort: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ListQuery(source);
@@ -42,6 +59,7 @@ export namespace app {
 	        this.installedOnly = source["installedOnly"];
 	        this.mono = source["mono"];
 	        this.license = source["license"];
+	        this.sort = source["sort"];
 	    }
 	}
 	export class PreviewInfo {

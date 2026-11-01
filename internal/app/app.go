@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sort"
 	"strings"
 
 	"nerder/internal/catalog"
@@ -25,6 +26,7 @@ type ListQuery struct {
 	InstalledOnly bool   `json:"installedOnly"`
 	Mono          string `json:"mono"` // "" | "mono" | "nonmono"
 	License       string `json:"license"`
+	Sort          string `json:"sort"` // "" or "name" (A-Z; best match first when searching), "glyphs", "downloads", "stars", "gfrank"
 }
 
 type PreviewInfo struct {
@@ -38,6 +40,10 @@ type App struct {
 	f   *fetch.Fetcher
 	in  *installer.Installer
 	ctx context.Context
+
+	// OpenURL opens a URL in the user's browser; the shell sets it (Wails
+	// supplies the implementation). Nil makes OpenUpstream a no-op error.
+	OpenURL func(ctx context.Context, url string)
 }
 
 func New(cat *catalog.Catalog, f *fetch.Fetcher, in *installer.Installer) *App {
@@ -64,7 +70,36 @@ func (a *App) List(q ListQuery) ([]FamilyView, error) {
 		}
 		out = append(out, FamilyView{Family: f, Status: string(s)})
 	}
+	// Search already returns A-Z, or best match first when there is a query.
+	// Ties keep that order because the sort is stable.
+	switch q.Sort {
+	case "glyphs":
+		sort.SliceStable(out, func(i, j int) bool { return out[i].Glyphs > out[j].Glyphs })
+	case "stars":
+		sort.SliceStable(out, func(i, j int) bool { return out[i].Stars > out[j].Stars })
+	case "downloads":
+		sort.SliceStable(out, func(i, j int) bool { return out[i].Downloads > out[j].Downloads })
+	case "gfrank": // best rank first; families Google Fonts does not host go last
+		sort.SliceStable(out, func(i, j int) bool {
+			a, b := out[i].GFRank, out[j].GFRank
+			return a > 0 && (b == 0 || a < b)
+		})
+	}
 	return out, nil
+}
+
+// OpenUpstream opens the family's upstream GitHub project in the browser. The
+// URL is built from the catalog, never from caller input.
+func (a *App) OpenUpstream(folder string) error {
+	f, ok := a.cat.Find(folder)
+	if !ok || f.Repo == "" {
+		return fmt.Errorf("no upstream project for %q", folder)
+	}
+	if a.OpenURL == nil {
+		return fmt.Errorf("opening links is not available")
+	}
+	a.OpenURL(a.ctx, "https://github.com/"+f.Repo)
+	return nil
 }
 
 func (a *App) Licenses() []string { return a.cat.Licenses() }
