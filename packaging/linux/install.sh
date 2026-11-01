@@ -38,7 +38,7 @@ EOF
 update-desktop-database "$data/applications" 2>/dev/null || true
 gtk-update-icon-cache -f -t "$data/icons/hicolor" 2>/dev/null || true
 # KDE keeps its own icon cache and ignores the GTK one.
-command -v kbuildsycoca6 >/dev/null 2>&1 && kbuildsycoca6 >/dev/null 2>&1 || true
+if command -v kbuildsycoca6 >/dev/null 2>&1; then kbuildsycoca6 >/dev/null 2>&1 || true; fi
 
 echo "Installed nerder to $bindir/nerder and added it to your application menu."
 case ":$PATH:" in
