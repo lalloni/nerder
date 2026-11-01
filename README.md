@@ -20,7 +20,21 @@ For Linux (amd64, arm64) and macOS (Intel and Apple Silicon).
 Download the build for your system from the
 [latest release](https://github.com/lalloni/nerder/releases/latest).
 
-**Linux** (`nerder-linux-amd64.tar.gz` or `nerder-linux-arm64.tar.gz`)
+**Debian, Ubuntu and derivatives** (`nerder_<version>_amd64.deb` or `_arm64.deb`)
+
+```
+sudo apt install ./nerder_0.1.0_amd64.deb
+```
+
+**Fedora and compatible** (`nerder-<version>-1.x86_64.rpm` or `.aarch64.rpm`)
+
+```
+sudo dnf install ./nerder-0.1.0-1.x86_64.rpm
+```
+
+Both pull in the WebKitGTK 4.1 library they need.
+
+**Any other Linux** (`nerder-linux-amd64.tar.gz` or `nerder-linux-arm64.tar.gz`)
 
 ```
 tar xzf nerder-linux-amd64.tar.gz
@@ -87,9 +101,9 @@ your user cache folder.
   `fonts.json` schema changes by falling back to the embedded copy, check that
   new families' file names are still matched to their family, and show a cue when
   an installed font comes from an older release.
-- **More ways to install.** Linux: `.deb` and `.rpm` packages that declare the
-  WebKitGTK dependency, a Flatpak for Flathub, and an AUR package; an AppImage was
-  considered but WebKitGTK is hard to bundle. macOS: a Homebrew cask in a tap, and
+- **More ways to install.** Linux: a Flatpak for Flathub, an AUR package, and a
+  hosted apt/dnf repository for automatic updates; an AppImage was considered but
+  WebKitGTK is hard to bundle. macOS: a Homebrew cask in a tap, and
   code signing and notarization so Gatekeeper stops asking.
 
 ## Builds and releases
@@ -97,8 +111,9 @@ your user cache folder.
 GitHub Actions (`.github/workflows/ci.yml`) runs the tests on Linux and macOS,
 then builds `linux-amd64`, `linux-arm64` and a universal `macos-universal` app on
 native runners and uploads them as workflow artifacts. The Linux archives bundle
-`install.sh` and `uninstall.sh` (from `packaging/linux/`). Pushing a tag such as
-`v0.1.0` also publishes the builds as a GitHub release. The `ubuntu-24.04-arm`
+`install.sh` and `uninstall.sh`, and `.deb` and `.rpm` packages are built with
+[nfpm](https://nfpm.goreleaser.com) (config and scripts in `packaging/linux/`).
+Pushing a tag such as `v0.1.0` also publishes the builds as a GitHub release. The `ubuntu-24.04-arm`
 runner is free for public repositories only.
 
 ## Developing
