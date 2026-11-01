@@ -2,11 +2,15 @@
 
 Browse every [Nerd Fonts](https://www.nerdfonts.com) family rendered in its real
 font on a syntax-coloured Go snippet, then install or uninstall it with one
-click. Fonts go to `~/.local/share/fonts/NerdFonts/<Family>/` (or
-`$XDG_DATA_HOME/fonts`), and `fc-cache` is run so apps can use them right away.
-Some terminals and editors still need a restart to pick up a new font.
+click. Some terminals and editors still need a restart to pick up a new font.
 
-Linux only. Built with Go and [Wails](https://wails.io) v2 (WebKitGTK).
+| | Fonts go to | Made available by |
+|---|---|---|
+| Linux | `~/.local/share/fonts/NerdFonts/<Family>/` (or `$XDG_DATA_HOME/fonts`) | running `fc-cache` |
+| macOS | `~/Library/Fonts/NerdFonts/<Family>/` | nothing; macOS picks them up |
+
+Linux (amd64, arm64) and macOS (Intel and Apple Silicon, 13 or newer). Built with
+Go and [Wails](https://wails.io) v2 (WebKitGTK on Linux, WKWebView on macOS).
 
 ## Using it
 
@@ -15,9 +19,20 @@ just build        # compile in the container -> build/bin/nerder
 ./build/bin/nerder
 ```
 
-Running the binary needs only the WebKitGTK runtime library
-(`libwebkit2gtk-4.1-0` on Debian/Ubuntu). Families are downloaded the first
+On Linux the binary needs only the WebKitGTK runtime library
+(`libwebkit2gtk-4.1-0` on Debian/Ubuntu); on macOS, `just build` makes a universal
+`build/bin/nerder.app` and needs Go, Node and the Xcode command line tools. Families are downloaded the first
 time their card scrolls into view and cached under `~/.cache/nerder/`.
+
+## Builds and releases
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the tests on Linux and macOS,
+then builds `linux-amd64`, `linux-arm64` and a universal `macos-universal` app on
+native runners and uploads them as workflow artifacts. Pushing a tag such as
+`v0.1.0` also publishes them as a GitHub release. The macOS app is not signed or
+notarized, so Gatekeeper asks you to right-click and choose Open the first time
+(or run `xattr -dr com.apple.quarantine nerder.app`). The `ubuntu-24.04-arm`
+runner is free for public repositories only.
 
 ## Developing
 
