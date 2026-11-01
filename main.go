@@ -60,7 +60,7 @@ func main() {
 		Linux: &linux.Options{
 			Icon: icon,
 			// Wayland and the desktop entry identify the app by this name;
-			// it matches nerder.desktop (just install-desktop).
+			// it matches nerder.desktop (just desktop-install).
 			ProgramName: "nerder",
 			// Setting Linux options changes the GPU default, so keep Wails' own.
 			WebviewGpuPolicy: linux.WebviewGpuPolicyNever,

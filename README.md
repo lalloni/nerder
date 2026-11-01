@@ -47,7 +47,8 @@ just test           # go test ./... in the container
 just test-internal  # pure-Go packages only, on the host
 just dev            # live-reloading UI at http://localhost:34115
 just shell          # shell inside the build container
-just install-desktop # desktop entry + icon in ~/.local/share, for the taskbar icon
+just desktop-install   # desktop entry + icon in ~/.local/share, for the taskbar icon
+just desktop-uninstall # remove them again
 just snapshot       # regenerate glyph counts, downloads, stars, Google Fonts rank (needs network)
 ```
 
