@@ -1,4 +1,8 @@
-# nerder
+<p align="center">
+  <img src="build/appicon.png" width="96" alt="nerder icon">
+</p>
+
+<h1 align="center">nerder</h1>
 
 [![CI](https://github.com/lalloni/nerder/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/lalloni/nerder/actions/workflows/ci.yml)
 [![Go version](https://img.shields.io/github/go-mod/go-version/lalloni/nerder)](go.mod)
