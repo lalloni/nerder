@@ -1,21 +1,53 @@
 # nerder
 
+[![CI](https://github.com/lalloni/nerder/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/lalloni/nerder/actions/workflows/ci.yml)
+[![Go version](https://img.shields.io/github/go-mod/go-version/lalloni/nerder)](go.mod)
+![Platforms](https://img.shields.io/badge/platforms-linux%20%7C%20macOS-blue)
+
 Browse every [Nerd Fonts](https://www.nerdfonts.com) family rendered in its real
 font on a syntax-coloured Go snippet, then install or uninstall it with one
 click. Some terminals and editors still need a restart to pick up a new font.
+
+For Linux (amd64, arm64) and macOS (Intel and Apple Silicon).
+
+<p>
+  <img src="docs/screenshots/list.png" width="49%" alt="List view in light mode: each card shows the font's name and sample in the real font, its facts, and the Go snippet">
+  <img src="docs/screenshots/grid-dark.png" width="49%" alt="Grid view in dark mode with the same cards side by side">
+</p>
+
+## Install
+
+Download the build for your system from the
+[latest release](https://github.com/lalloni/nerder/releases/latest).
+
+**Linux** (`nerder-linux-amd64.tar.gz` or `nerder-linux-arm64.tar.gz`)
+
+```
+tar xzf nerder-linux-amd64.tar.gz
+cd nerder-linux-amd64
+./install.sh        # adds nerder to your application menu; no root needed
+```
+
+or just run `./nerder` from the extracted folder. nerder needs the WebKitGTK 4.1
+library (`libwebkit2gtk-4.1-0` on Debian and Ubuntu, `webkit2gtk4.1` on Fedora,
+`webkit2gtk-4.1` on Arch); `install.sh` tells you if it is missing. Run
+`./uninstall.sh` to remove it again.
+
+**macOS** (`nerder-macos-universal.zip`, macOS 13 or newer, Intel or Apple Silicon)
+
+Unzip it and drag `nerder.app` to Applications. The app is not signed yet, so the
+first time, right-click it and choose Open (or run
+`xattr -dr com.apple.quarantine /Applications/nerder.app`).
+
+### Where fonts go
 
 | | Fonts go to | Made available by |
 |---|---|---|
 | Linux | `~/.local/share/fonts/NerdFonts/<Family>/` (or `$XDG_DATA_HOME/fonts`) | running `fc-cache` |
 | macOS | `~/Library/Fonts/NerdFonts/<Family>/` | nothing; macOS picks them up |
 
-Linux (amd64, arm64) and macOS (Intel and Apple Silicon, 13 or newer). Built with
-Go and [Wails](https://wails.io) v2 (WebKitGTK on Linux, WKWebView on macOS).
-
-<p>
-  <img src="docs/screenshots/list.png" width="49%" alt="List view in light mode: each card shows the font's name and sample in the real font, its facts, and the Go snippet">
-  <img src="docs/screenshots/grid-dark.png" width="49%" alt="Grid view in dark mode with the same cards side by side">
-</p>
+Families are downloaded the first time their card scrolls into view and cached in
+your user cache folder.
 
 ## Features
 
@@ -42,37 +74,52 @@ Go and [Wails](https://wails.io) v2 (WebKitGTK on Linux, WKWebView on macOS).
   by GitHub Actions. Popularity numbers are a snapshot embedded in the app and
   refreshed with `just snapshot`.
 
-## Using it
+## Roadmap
 
-```
-just build        # compile in the container -> build/bin/nerder
-./build/bin/nerder
-```
-
-On Linux the binary needs only the WebKitGTK runtime library
-(`libwebkit2gtk-4.1-0` on Debian/Ubuntu); on macOS, `just build` makes a universal
-`build/bin/nerder.app` and needs Go, Node and the Xcode command line tools. Families are downloaded the first
-time their card scrolls into view and cached under `~/.cache/nerder/`.
+- **Discover the Nerd Fonts version at launch.** Today the release (v3.5.1), the
+  family list and the stats are pinned at build time. Planned: look up the latest
+  release tag on launch (the `releases/latest` redirect needs no API key), fetch
+  that tag's `fonts.json`, cache it on disk and refresh it at most daily, with the
+  embedded catalog as the offline fallback. Archive URLs and the cache folder
+  would follow the discovered tag, release downloads would be fetched live, and
+  glyph counts computed after a font downloads. Stars, Google rank and the
+  upstream map would stay snapshots (`just snapshot`). Open points: tolerate
+  `fonts.json` schema changes by falling back to the embedded copy, check that
+  new families' file names are still matched to their family, and show a cue when
+  an installed font comes from an older release.
+- **More ways to install.** Linux: `.deb` and `.rpm` packages that declare the
+  WebKitGTK dependency, a Flatpak for Flathub, and an AUR package; an AppImage was
+  considered but WebKitGTK is hard to bundle. macOS: a Homebrew cask in a tap, and
+  code signing and notarization so Gatekeeper stops asking.
 
 ## Builds and releases
 
 GitHub Actions (`.github/workflows/ci.yml`) runs the tests on Linux and macOS,
 then builds `linux-amd64`, `linux-arm64` and a universal `macos-universal` app on
-native runners and uploads them as workflow artifacts. Pushing a tag such as
-`v0.1.0` also publishes them as a GitHub release. The macOS app is not signed or
-notarized, so Gatekeeper asks you to right-click and choose Open the first time
-(or run `xattr -dr com.apple.quarantine nerder.app`). The `ubuntu-24.04-arm`
+native runners and uploads them as workflow artifacts. The Linux archives bundle
+`install.sh` and `uninstall.sh` (from `packaging/linux/`). Pushing a tag such as
+`v0.1.0` also publishes the builds as a GitHub release. The `ubuntu-24.04-arm`
 runner is free for public repositories only.
 
 ## Developing
 
-Compiling happens in a container, so the host needs no GTK or WebKitGTK
-development packages. You need [Podman](https://podman.io) and
+Built with Go and [Wails](https://wails.io) v2 (WebKitGTK on Linux, WKWebView on
+macOS). On Linux, compiling happens in a container, so the host needs no GTK or
+WebKitGTK development packages. You need [Podman](https://podman.io) and
 [just](https://github.com/casey/just).
+
+Build and run from source:
+
+```
+just build          # compile in the container -> build/bin/nerder (macOS: build/bin/nerder.app)
+./build/bin/nerder
+```
+
+On macOS, `just build` builds natively and needs Go, Node and the Xcode command
+line tools. The other recipes:
 
 ```
 just image          # build the container image (once)
-just build          # wails build in the container
 just test           # go test ./... in the container
 just test-internal  # pure-Go packages only, on the host
 just dev            # live-reloading UI at http://localhost:34115
