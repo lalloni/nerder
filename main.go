@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"log"
 	"os"
@@ -15,6 +16,7 @@ import (
 	"nerder/internal/catalog"
 	"nerder/internal/fetch"
 	"nerder/internal/installer"
+	"nerder/internal/winstate"
 )
 
 //go:embed all:frontend/dist
@@ -32,17 +34,42 @@ func main() {
 	a := app.New(cat, fetch.New(filepath.Join(cacheDir, "nerder"), catalog.ReleaseTag), installer.New(cat))
 	a.OpenURL = wailsruntime.BrowserOpenURL
 
+	statePath, err := winstate.Path()
+	if err != nil {
+		log.Fatal(err)
+	}
+	state := winstate.Load(statePath)
+	startState := options.Normal
+	if state.Maximised {
+		startState = options.Maximised
+	}
+
 	err = wails.Run(&options.App{
-		Title:  "nerder",
-		Width:  1100,
-		Height: 800,
+		Title:            "nerder",
+		Width:            state.Width,
+		Height:           state.Height,
+		WindowStartState: startState,
 		AssetServer: &assetserver.Options{
 			Assets:  assets,
 			Handler: app.NewFontHandler(a),
 		},
 		BackgroundColour: &options.RGBA{R: 250, G: 250, B: 249, A: 1},
-		OnStartup:        a.Startup,
-		Bind:             []interface{}{a},
+		OnStartup: func(ctx context.Context) {
+			a.Startup(ctx)
+			if state.HasPos && !state.Maximised {
+				wailsruntime.WindowSetPosition(ctx, state.X, state.Y)
+			}
+		},
+		OnBeforeClose: func(ctx context.Context) bool {
+			w, h := wailsruntime.WindowGetSize(ctx)
+			x, y := wailsruntime.WindowGetPosition(ctx)
+			max := wailsruntime.WindowIsMaximised(ctx)
+			if err := winstate.Save(statePath, winstate.Merge(state, w, h, x, y, max)); err != nil {
+				log.Printf("saving window state: %v", err)
+			}
+			return false
+		},
+		Bind: []interface{}{a},
 	})
 	if err != nil {
 		log.Fatal(err)
