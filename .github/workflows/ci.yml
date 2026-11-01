@@ -77,6 +77,14 @@ jobs:
             install -m755 packaging/linux/install.sh packaging/linux/uninstall.sh "dist/$pkg/"
             tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
             rm -r "dist/$pkg"
+            # .deb and .rpm for the same architecture
+            go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.48.0
+            export GOARCH="$(go env GOARCH)"
+            if [ "${GITHUB_REF_TYPE}" = tag ]; then VERSION="${GITHUB_REF_NAME#v}"; else VERSION=0.0.0-dev; fi
+            export VERSION
+            for format in deb rpm; do
+              nfpm package -p "$format" -f packaging/linux/nfpm.yaml -t dist
+            done
           fi
       - uses: actions/upload-artifact@v7
         with:

@@ -1,0 +1,36 @@
+# .deb and .rpm packages, built in CI with nfpm from the binary in build/bin.
+# Environment: VERSION (without the leading v), GOARCH (amd64 or arm64).
+name: nerder
+arch: ${GOARCH}
+platform: linux
+version: ${VERSION}
+section: utils
+maintainer: Pablo Lalloni <plalloni@gmail.com>
+description: |
+  Browse and install Nerd Fonts.
+  Every Nerd Fonts family is previewed in its real font on a Go sample; one
+  click installs or removes it for the current user.
+homepage: https://github.com/lalloni/nerder
+contents:
+  - src: build/bin/nerder
+    dst: /usr/bin/nerder
+    file_info:
+      mode: 0755
+  - src: packaging/linux/nerder.desktop
+    dst: /usr/share/applications/nerder.desktop
+    file_info:
+      mode: 0644
+  - src: build/appicon.png
+    dst: /usr/share/icons/hicolor/512x512/apps/nerder.png
+    file_info:
+      mode: 0644
+# The WebKitGTK 4.1 library is the only runtime dependency not already implied by GTK.
+overrides:
+  deb:
+    depends:
+      - libgtk-3-0
+      - libwebkit2gtk-4.1-0
+  rpm:
+    depends:
+      - gtk3
+      - webkit2gtk4.1

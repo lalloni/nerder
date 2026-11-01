@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=nerder
+Comment=Browse and install Nerd Fonts
+Exec=nerder
+Icon=nerder
+Terminal=false
+Categories=Utility;Development;
+StartupWMClass=nerder
